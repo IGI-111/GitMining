@@ -48,7 +48,7 @@ parseCSV :: String -> Either ParseError [ItemSet]
 parseCSV input = parse csvFile ("unknown") input
 
 -- frequent items
-frequentItems :: Integral a => [ItemSet] -> Support -> Map Item a
+frequentItems :: [ItemSet] -> Support -> Map Item Integer
 frequentItems x y = pi where
   pi = Map.filter (>= frequency) m where
   frequency = ceiling(y * (fromIntegral $ length x)) where
@@ -57,8 +57,19 @@ frequentItems x y = pi where
   f m i = Map.insertWith acc i 1 m where
   acc new old = old + 1
 
--- frequent itemsets
--- frequentItemSets :: [ItemSet] -> [Item] -> Support -> [ItemSet]
+displayFrequentItems :: Map Item Integer -> String
+displayFrequentItems i = Map.foldrWithKey (\key val old -> old ++ (itemToString key val) ++ "\n" ) "" i where
+	itemToString (Item str) freq = str++" ("++(show freq)++")"
+
+-- frequentItemSets :: [ItemSet] -> Support -> Map ItemSet Integer
+-- frequentItemSets x y = pi where
+--   pi = Map.filter (>= frequency) candidates where
+--   frequency = ceiling(y * (fromIntegral $ length x)) where
+--   candidates = foldl count Map.empty x where
+--   count m (ItemSet is) = Set.foldl f m is where
+--   f m i = Map.insertWith acc i 1 m where
+--   acc new old = old + 1
+
 
 main :: IO ()
 main = do
@@ -70,20 +81,9 @@ main = do
                  print e
     Right r -> do
       let i = frequentItems r (read s)
-      print $ i
+      putStrLn $ displayFrequentItems i
 
 -- helper functions defined here
-
-trim :: [Char] -> [Char]
-trim = trimFront . trimBack
-
-trimFront :: [Char] -> [Char]
-trimFront (x:xs) = case x of
-                     ' ' -> trim xs
-                     _   -> (x:xs)
-
-trimBack :: [Char] -> [Char]
-trimBack x = reverse $ trimFront $ reverse x
 
 allItems :: [ItemSet] -> [Item]
 allItems iss = Set.toList $ foldl add Set.empty iss where
