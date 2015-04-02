@@ -48,8 +48,8 @@ parseCSV :: String -> Either ParseError [ItemSet]
 parseCSV input = parse csvFile ("unknown") input
 
 -- frequent items
-frequentItems :: [ItemSet] -> Support -> [(Item, Integer)]
-frequentItems x y = Set.toList $ Map.keysSet pi frequency where
+frequentItems :: Integral a => [ItemSet] -> Support -> Map Item a
+frequentItems x y = pi where
   pi = Map.filter (>= frequency) m where
   frequency = ceiling(y * (fromIntegral $ length x)) where
   m = foldl count Map.empty x where
@@ -65,12 +65,12 @@ main = do
   putStrLn "Apriori Algorithm for frequent itemsets mining"
   [f, s] <- getArgs
   c <- readFile f
-  case parse csvFile "(stdin)" c of 
+  case parse csvFile "(stdin)" c of
     Left e -> do putStrLn "Error parsing input: "
                  print e
     Right r -> do
       let i = frequentItems r (read s)
-      mapM_ print $ i
+      print $ i
 
 -- helper functions defined here
 
