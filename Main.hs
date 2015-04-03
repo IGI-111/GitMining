@@ -3,6 +3,8 @@ module Main where
 import Data.Set (Set)
 import qualified Data.Set as Set
 import qualified Data.List as List
+import Debug.Trace (traceShow)
+import CSVParser
 
 -- data structures defined here
 
@@ -12,9 +14,15 @@ instance Show Item where
 
 data ItemSet = ItemSet (Set Item) deriving (Eq, Ord)
 instance Show ItemSet where
-	show (ItemSet x) = let y = foldl (++) "" $ map show $ Set.toList x in y
+	show (ItemSet x) = foldr ((\y old -> y ++ " " ++ old).show) "" (Set.toList x)
+
+data Rule = Rule ItemSet ItemSet deriving (Eq)
+instance Show Rule where
+	show (Rule a b) = show a ++ "-> " ++ show b
+
 
 type Frequency = Double
+type Count = Int
 
 semiUnion :: ItemSet -> ItemSet -> ItemSet
 semiUnion (ItemSet set1) (ItemSet set2) = ItemSet (if max1 <= max2 && Set.delete max1 set1 == Set.delete max2 set2 then set1 `Set.union` set2 else Set.empty) where
@@ -28,17 +36,20 @@ generateLevels singles = until (\x -> head x == lastLevel) (\x -> generateNextLe
 	lastLevel = [ItemSet $ Set.fromList singles]
 
 generateNextLevel :: [ItemSet] -> [ItemSet]
-generateNextLevel level = foldr (\value old -> generate value ++ old) [] level where
-	generate value = takeWhile (/= empty) (foldr (\x old -> semiUnion value x : old) [] (tail $ List.dropWhile (/= value) level)) where
-		empty = ItemSet $ Set.fromList []
+generateNextLevel level = traceShow ("Computing level " ++ show (isSize (head level))) $ foldr (\value old -> generate value ++ old) [] level where
+	generate value = takeWhile (/= empty) (foldr (\x old -> semiUnion value x : old) [] (tail $ List.dropWhile (/= value) level))
+	empty = ItemSet $ Set.fromList []
+	isSize (ItemSet set) = Set.size set
 
 frequency :: [ItemSet] -> ItemSet -> Frequency
 frequency table (ItemSet set) = setCount / fromIntegral (length table) where
-	setCount = fromIntegral $ length (filter (\(ItemSet row) -> set `Set.isSubsetOf` row) table)
+	setCount = fromIntegral $ count table (ItemSet set)
+
+count :: [ItemSet] -> ItemSet -> Count
+count table (ItemSet set) = length (filter (\(ItemSet row) -> set `Set.isSubsetOf` row) table)
 
 singletons :: [ItemSet] -> [Item]
 singletons table = Set.toList $ foldr (\(ItemSet row) old -> old `Set.union` row) (Set.fromList []) table where
-
 
 frequentPatterns :: Frequency -> [ItemSet] -> [[ItemSet]]
 frequentPatterns thresh table = until (\x -> [] == head x) (\x -> filterByFrequency (generateNextLevel (head x)) : x) [firstLevel] where
@@ -47,6 +58,9 @@ frequentPatterns thresh table = until (\x -> [] == head x) (\x -> filterByFreque
 
 
 main :: IO()
-main = print $ frequentPatterns 1 table where
-	table = [ItemSet (Set.fromList [Item "a", Item "b", Item "c"]), ItemSet (Set.fromList [Item "a", Item "b"])]
-
+main = do
+	file <- readFile "out.csv"
+	case parseCSV file of
+		Left _ -> putStrLn "Could not parse out.csv"
+		Right val -> mapM_ (\x -> putStrLn (show x ++ "(" ++ show (count table x) ++ ")")) (concat (frequentPatterns 0.6 table)) where
+			table = map (ItemSet. Set.fromList .map Item) val
