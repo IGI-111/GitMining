@@ -52,5 +52,5 @@ singletons table = Set.toList $ foldr (\(ItemSet row) old -> old `Set.union` row
 
 frequentPatterns :: Frequency -> [ItemSet] -> [[ItemSet]]
 frequentPatterns thresh table = until (\x -> [] == head x) (\x -> filterByFrequency (generateNextLevel (head x)) : x) [firstLevel] where
-	firstLevel = map (\x -> ItemSet $ Set.fromList [x]) (singletons table)
+	firstLevel = filterByFrequency $ map (\x -> ItemSet $ Set.fromList [x]) (singletons table)
 	filterByFrequency = filter (\x -> frequency table x >= thresh)
