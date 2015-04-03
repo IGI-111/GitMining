@@ -14,6 +14,6 @@ main = do
 	let threshold = read $ last args
 	file <- readFile filename
 	case parseCSV file of
-		Left _ -> putStrLn "Could not parse out.csv"
+		Left _ -> error "Could not parse out.csv"
 		Right val -> mapM_ (\x -> putStrLn (show x ++ "(" ++ show (count table x) ++ ")")) (concat (frequentPatterns threshold table)) where
 			table = map (ItemSet. Set.fromList .map Item) val
