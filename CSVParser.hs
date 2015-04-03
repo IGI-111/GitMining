@@ -2,7 +2,6 @@ module CSVParser (
 	parseCSV
 )where
 
-
 import Text.ParserCombinators.Parsec
 
 csvFile :: GenParser Char st [[String]]
@@ -29,11 +28,10 @@ remainingCells =
 	<|> return []                -- No comma?  Return [], no more cells
 
 cellContent :: GenParser Char st String
-cellContent = 
-	many (noneOf ",\n")
+cellContent = many (noneOf ",\n")
 
 eol :: GenParser Char st Char
 eol = char '\n'
 
 parseCSV :: String -> Either ParseError [[String]]
-parseCSV input = parse csvFile "(unknown)" input
+parseCSV = parse csvFile "(unknown)"
