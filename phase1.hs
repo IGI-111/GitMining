@@ -1,10 +1,9 @@
-module Main where
-
 import CSVParser
-import Apriori
+import FrequentPatterns
+import DataModel
 import qualified Data.Set as Set
-import System.Environment (getArgs)
-import Control.Monad
+import System.Environment(getArgs)
+import Control.Monad(when)
 
 main :: IO()
 main = do

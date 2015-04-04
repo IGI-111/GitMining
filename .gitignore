@@ -1,4 +1,4 @@
-*.hi
-*.o
-Main
-*.csv
+#Ignore anything but haskell source and shell scripts
+*
+!*.hs
+!*.sh
