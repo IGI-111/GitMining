@@ -3,7 +3,7 @@ module FrequentPatterns (
     ) where
 import DataModel
 import qualified Data.Set as Set
-import Debug.Trace (traceShow)
+import Debug.Trace (trace)
 import qualified Data.List as List
 
 semiUnion :: ItemSet -> ItemSet -> ItemSet
@@ -22,7 +22,7 @@ semiUnion (ItemSet set1) (ItemSet set2) = ItemSet $
 
 -- generate the next level in a bottom-up route
 generateNextLevel :: [ItemSet] -> [ItemSet]
-generateNextLevel level = traceShow ("Computing level " ++ show (isSize (head level))) $
+generateNextLevel level = trace ("Computing level " ++ show (isSize (head level))) $
     foldr (\value old -> generate value ++ old) [] level where
         generate value = takeWhile (/= empty)
             (foldr (\x old -> semiUnion value x : old) [] (tail $ List.dropWhile (/= value) level))
@@ -35,5 +35,6 @@ singletons table = Set.toList $ foldr union (Set.fromList []) table where
 frequentPatterns :: Frequency -> [ItemSet] -> [[ItemSet]]
 frequentPatterns thresh table = until (\x -> [] == head x)
     (\x -> filterByFrequency (generateNextLevel (head x)) : x) [firstLevel] where
-        firstLevel = filterByFrequency $ map (\x -> ItemSet $ Set.fromList [x]) (singletons table)
+        firstLevel = filterByFrequency $ map (\x -> ItemSet $ Set.fromList [x]) $
+            trace "Generated Singletons" (singletons table)
         filterByFrequency = filter (\x -> frequency table x >= thresh)
