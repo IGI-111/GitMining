@@ -13,13 +13,14 @@ class Freq a where
 data Item = Item String deriving (Eq, Ord)
 
 instance Show Item where
-    show (Item a) = show a
+    show (Item a) = a
+
 
 data ItemSet = ItemSet (Set Item) deriving (Eq, Ord)
 
 instance Show ItemSet where
     show (ItemSet x) =
-        foldr ((\y old -> y ++ " " ++ old).show) "" (Set.toList x)
+        init $ foldr ((\y old -> y ++ " " ++ old).show) "" (Set.toList x)
 
 instance Freq ItemSet where
     frequency table (ItemSet set) =
@@ -40,7 +41,7 @@ empty = ItemSet (Set.fromList [])
 data Rule = Rule ItemSet ItemSet deriving (Eq)
 
 instance Show Rule where
-    show (Rule a b) = show a ++ "-> " ++ show b
+    show (Rule a b) = show a ++ "->" ++ show b
 
 instance Freq Rule where
     frequency table (Rule (ItemSet set1) (ItemSet set2)) = frequency table $

@@ -1,5 +1,4 @@
 import CSVParser
-import FrequentPatterns
 import DataModel
 import ExtractRules
 import qualified Data.Set as Set
@@ -15,6 +14,6 @@ main = do
     file <- readFile filename
     case parseCSV file of
         Left _ -> error "Could not parse out.csv"
-        Right val -> print $ extractRules threshold $
-                filter (/= empty) $ concat $ frequentPatterns 0.01 table where
-                    table = map (ItemSet. Set.fromList .map Item) val
+        Right val -> do
+            let table = map (ItemSet. Set.fromList .map Item) val
+            print $ extractRules threshold table
