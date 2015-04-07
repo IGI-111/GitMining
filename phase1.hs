@@ -18,10 +18,11 @@ main = do
         Right val -> do
             let table = map (ItemSet. Set.fromList .map Item) val
             let freqPats = concat (frequentPatterns threshold table)
-            mapM_ (\x -> putStrLn (show x ++ "(" ++ show (count table x) ++ ")")) freqPats
+	    let output = formatToCSV table freqPats
+	    putStrLn output
             when (length args > 2) $
-                writeFile (args !! 2) $ formatToCSV freqPats
+                writeFile (args !! 2) $ output
 
-formatToCSV :: [ItemSet] -> String
-formatToCSV = foldr (\x old -> old ++ formatRow x ++ "\n") "" where
-    formatRow (ItemSet set) = init $ Set.foldr (\x old -> old ++ show x ++ ",") "" set
+formatToCSV :: [ItemSet] -> [ItemSet] -> String
+formatToCSV table frequents = foldr (\x old -> old ++ formatRow x ++ "\n") "" frequents where
+    formatRow (ItemSet set) = init $ Set.foldr (\x old -> old ++ show x ++ ",") (show (count table (ItemSet set)) ++",") set
