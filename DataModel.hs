@@ -6,6 +6,7 @@ type Count = Int
 
 type Frequency = Double
 type Confidence = Double
+type Lift = Double
 
 class Freq a where
     frequency :: [ItemSet] -> a -> Frequency
@@ -50,3 +51,5 @@ instance Freq Rule where
 confidence :: [ItemSet] -> Rule -> Confidence
 confidence table (Rule x y) = frequency table (Rule x y) / frequency table x
 
+lift :: [ItemSet] -> Rule -> Lift
+lift table (Rule x y) = confidence table (Rule x y) / frequency table y

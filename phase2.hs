@@ -8,7 +8,7 @@ import Control.Monad(when)
 main :: IO()
 main = do
     args <- getArgs
-    when (3 /= length args) (error "Usage: phase2 <table.csv> <frequents.csv> <threshold>")
+    when (3 > length args) (error "Usage: phase2 table.csv frequents.csv threshold [out.assoc]")
     let threshold = read $ last args
     tableFile <- readFile $ head args
     freqFile <- readFile $ args !! 1
@@ -18,9 +18,10 @@ main = do
             case parseCSV freqFile of
                 Left _ -> error "Could not parse frequent patterns"
                 Right freqFileContent -> do
-                    putStrLn output
-                    when (length args > 2) $
-                        writeFile (args !! 2) $ output
+                    --putStrLn output
+                    print $ zip rules (map (lift table) rules)
+                    when (length args > 3) $
+                        writeFile (args !! 3) $ output
                     where
                         freqPats = map (ItemSet. Set.fromList .map Item) (map tail freqFileContent)
                         table = map (ItemSet. Set.fromList .map Item) tableFileContent

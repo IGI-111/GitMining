@@ -9,7 +9,7 @@ main :: IO()
 main = do
     args <- getArgs
     when (2 > length args)
-        (error "Usage: Main <table.csv> <threshold> <outfile.csv>")
+        (error "Usage: Main table.csv threshold [outfile.csv]")
     let filename = head args
     let threshold = read $ args !! 1
     file <- readFile filename
