@@ -27,3 +27,4 @@ main = do
                         table = map (ItemSet. Set.fromList .map Item) tableFileContent
                         rules = extractRules threshold table freqPats
                         output = init $ foldr (\x old -> old++x++"\n") "" $ map show rules
+

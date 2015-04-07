@@ -5,6 +5,7 @@ import DataModel
 import qualified Data.Set as Set
 import Debug.Trace (trace)
 import qualified Data.List as List
+import Control.Parallel.Strategies(parMap, rpar)
 
 semiUnion :: ItemSet -> ItemSet -> ItemSet
 semiUnion (ItemSet set1) (ItemSet set2) = ItemSet $
@@ -24,8 +25,8 @@ semiUnion (ItemSet set1) (ItemSet set2) = ItemSet $
 generateNextLevel :: [ItemSet] -> [ItemSet]
 generateNextLevel level = trace ("Computing level " ++ show (isSize (head level))) $
     foldr (\value old -> generate value ++ old) [] level where
-        generate value = takeWhile (/= empty)
-            (foldr (\x old -> semiUnion value x : old) [] (tail $ List.dropWhile (/= value) level))
+        generate value = takeWhile (/= empty) $
+            parMap rpar (semiUnion value) (tail $ List.dropWhile (/= value) level) -- FIXME: this could be a better strategy
         isSize (ItemSet set) = Set.size set
 
 singletons :: [ItemSet] -> [Item]
