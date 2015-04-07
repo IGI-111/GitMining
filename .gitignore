@@ -2,5 +2,7 @@
 *
 !*.hs
 !*.sh
-!*.java
+!**.java
 !pom.xml
+!*.txt
+!*.md
