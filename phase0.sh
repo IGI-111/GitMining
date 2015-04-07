@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 if [ -z $1 ] ; then
 	echo "NOTICE : phase0.sh NbYear OutFiles"
 	exit 1;
@@ -9,11 +8,10 @@ else
 		echo "NOTICE : phase0.sh NbYear OutFiles"
 		exit 1;
 	fi
-fi
-
-if  [ $(echo $1 | grep -v [a-Z] | wc -l) -eq 0 ]; then
-    echo "Erreur : arg \$1 non entier positif !"
-    exit 1
+	if  [ $(echo $1 | grep -v [a-Z] | wc -l) -eq 0 ]; then
+		echo "Erreur : arg \$1 non entier positif !"
+		exit 1
+	fi
 fi
 
 TIME="$1 year ago"
