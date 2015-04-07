@@ -18,8 +18,8 @@ main = do
         Right val -> do
             let table = map (ItemSet. Set.fromList .map Item) val
             let freqPats = concat (frequentPatterns threshold table)
-	    let output = formatToCSV table freqPats
-	    putStrLn output
+            let output = formatToCSV table freqPats
+            putStrLn output
             when (length args > 2) $
                 writeFile (args !! 2) $ output
 

@@ -6,8 +6,8 @@ import qualified Data.Set as Set
 import qualified Data.Map as Map
 import Data.Map(Map)
 
-extractRules :: Confidence -> [ItemSet] -> [Rule]
-extractRules threshold patterns = filter (\x -> threshold <= confidence patterns x) rules where
+extractRules :: Confidence -> [ItemSet] -> [ItemSet] -> [Rule]
+extractRules threshold table patterns = filter (\x -> threshold <= confidence table x) rules where
     rules = Map.foldrWithKey (\k v old -> ruleFromSubset v k : old) [] subsets
     subsets = foldr (\x old -> insertMultiple (filteredPowerset x) x old) Map.empty patterns
     filteredPowerset (ItemSet set) = map (ItemSet . Set.fromList) $
