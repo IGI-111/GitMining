@@ -21,10 +21,10 @@ main = do
                     --putStrLn output
                     print $ zip rules (map (lift table) rules)
                     when (length args > 3) $
-                        writeFile (args !! 3) $ output
+                        writeFile (args !! 3) output
                     where
-                        freqPats = map (ItemSet. Set.fromList .map Item) (map tail freqFileContent)
-                        table = map (ItemSet. Set.fromList .map Item) tableFileContent
-                        rules = extractRules threshold table freqPats
-                        output = init $ foldr (\x old -> old++x++"\n") "" $ map show rules
+                    freqPats = map ((ItemSet. Set.fromList .map Item) . tail) freqFileContent
+                    table = map (ItemSet. Set.fromList .map Item) tableFileContent
+                    rules = extractRules threshold table freqPats
+                    output = init $ foldr ((\x old -> old++x++"\n").show) "" rules
 

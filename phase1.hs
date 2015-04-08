@@ -21,8 +21,8 @@ main = do
             let output = formatToCSV table freqPats
             putStrLn output
             when (length args > 2) $
-                writeFile (args !! 2) $ output
+                writeFile (args !! 2) output
 
 formatToCSV :: [ItemSet] -> [ItemSet] -> String
-formatToCSV table frequents = foldr (\x old -> old ++ formatRow x ++ "\n") "" frequents where
+formatToCSV table = foldr (\x old -> old ++ formatRow x ++ "\n") "" where
     formatRow (ItemSet set) = init $ Set.foldr (\x old -> old ++ show x ++ ",") (show (count table (ItemSet set)) ++",") set
