@@ -42,7 +42,7 @@ empty = ItemSet (Set.fromList [])
 data Rule = Rule ItemSet ItemSet deriving (Eq)
 
 instance Show Rule where
-    show (Rule a b) = show a ++ "->" ++ show b
+    show (Rule a b) = show a ++ "," ++ show b
 
 instance Freq Rule where
     frequency table (Rule (ItemSet set1) (ItemSet set2)) = frequency table $
