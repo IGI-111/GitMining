@@ -16,12 +16,6 @@ semiUnion (ItemSet set1) (ItemSet set2) = ItemSet $
         max1 = Set.findMax set1
         max2 = Set.findMax set2
 
--- generate all possible combinations from a set of singletons
--- generateLevels :: [Item] -> [[ItemSet]]
--- generateLevels singles = until (\x -> head x == lastLevel) (\x -> generateNextLevel (head x) : x) [firstLevel] where
--- 	firstLevel = map (\x -> ItemSet $ Set.fromList [x]) singles
--- 	lastLevel = [ItemSet $ Set.fromList singles]
-
 -- generate the next level in a bottom-up route
 generateNextLevel :: [ItemSet] -> [ItemSet]
 generateNextLevel level = trace ("Computing level " ++ show (isSize (head level))) $
@@ -34,7 +28,7 @@ generateNextLevel level = trace ("Computing level " ++ show (isSize (head level)
 singletons :: [ItemSet] -> [Item]
 singletons table = Set.toList $ foldr union (Set.fromList []) table
     where
-	union (ItemSet row) old = old `Set.union` row
+        union (ItemSet row) old = old `Set.union` row
 
 frequentPatterns :: Frequency -> [ItemSet] -> [[ItemSet]]
 frequentPatterns thresh table = until (\x -> [] == head x)

@@ -2,14 +2,13 @@ import CSVParser
 import DataModel
 import ExtractRules
 import qualified Data.Set as Set
-import qualified Data.List as List
 import System.Environment(getArgs)
 import Control.Monad(when)
 
 main :: IO()
 main = do
     args <- getArgs
-    when (3 > length args) (error "Usage: phase2 table.csv frequents.csv threshold [out.assoc]")
+    when (3 > length args) (error "Usage: phase2 table.csv frequents.csv threshold [rules.csv]")
     let threshold = read $ args !! 2
     tableFile <- readFile $ head args
     freqFile <- readFile $ args !! 1
@@ -25,6 +24,9 @@ main = do
                     where
                     freqPats = map ((ItemSet. Set.fromList .map Item) . tail) freqFileContent
                     table = map (ItemSet. Set.fromList .map Item) tableFileContent
-                    rules = List.sortBy (\x y -> compare (lift table y) (lift table x)) $ extractRules threshold table freqPats
-                    output = init $ foldr ((\x old -> old ++ x ++ "\n").show) "" $ take 10 rules
+                    rules =  extractRules threshold table freqPats
+                    output = formatToCSV rules
 
+formatToCSV :: [Rule] -> String
+formatToCSV = foldr (\x old -> old ++ formatRow x ++ "\n") "" where
+    formatRow (Rule x y) = show x ++ ", ," ++ show y

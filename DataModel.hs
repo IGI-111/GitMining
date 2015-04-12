@@ -21,7 +21,7 @@ data ItemSet = ItemSet (Set Item) deriving (Eq, Ord)
 
 instance Show ItemSet where
     show (ItemSet x) =
-        init $ foldr ((\y old -> y ++ " " ++ old).show) "" (Set.toList x)
+        init $ foldr ((\y old -> y ++ "," ++ old).show) "" (Set.toList x)
 
 instance Freq ItemSet where
     frequency table (ItemSet set) =
