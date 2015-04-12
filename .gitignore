@@ -6,4 +6,4 @@
 !pom.xml
 !*.txt
 !*.md
-!*.csv
+!data/*.csv
